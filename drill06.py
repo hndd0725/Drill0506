@@ -16,15 +16,15 @@ def load_resources():
 def handle_events():
     global running
     global cx, cy
-    global mx,my
+    global mx, my
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             running = False
-        elif event.type==SDL_MOUSEMOTION:
-            mx,my=event.x,TUK_HEIGHT-1-event.y
-        elif event.type==SDL_MOUSEBUTTONDOWN and event.button==SDL_BUTTON_LEFT:
-            points.append((event.x,TUK_HEIGHT-1-event.y))#클릭된 위치를 새로운 점에 추가
+        elif event.type == SDL_MOUSEMOTION:
+            mx, my = event.x, TUK_HEIGHT - 1 - event.y
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            points.append((event.x, TUK_HEIGHT - 1 - event.y))  # 클릭된 위치를 새로운 점에 추가
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
     pass
@@ -34,15 +34,15 @@ def reset_world():
     global running, cx, cy, frame
     global t
     global action
-    global mx,my
+    global mx, my
     global points
-    mx,my=0,0
+    mx, my = 0, 0
     running = True
     cx, cy = TUK_WIDTH // 2, TUK_HEIGHT // 2
     frame = 0
     action = 3
 
-    points=[]
+    points = []
     set_new_target_arrow()
 
 
@@ -52,23 +52,25 @@ def set_new_target_arrow():
     global frame
     global target_exist
 
-    if points:#points리스트에 점이 남아있으면
+    if points:  # points리스트에 점이 남아있으면
         sx, sy = cx, cy  # p1:시작점
         # hx,hy=50,50
-        hx, hy = points[0]# p2:끝점
+        hx, hy = points[0]  # p2:끝점
         t = 0.0
         action = 1 if sx < hx else 0
-        frame=0
-        target_exist=True
+        frame = 0
+        target_exist = True
     else:
-        action=3 if action==1 else 2#이전에 소년이 우측으로 이동중이었으면, IDLE 동작시 우측을 바라보도록
-        frame=0
-        target_exist=False
+        action = 3 if action == 1 else 2  # 이전에 소년이 우측으로 이동중이었으면, IDLE 동작시 우측을 바라보도록
+        frame = 0
+        target_exist = False
+
+
 def render_world():
     clear_canvas()
     TUK_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
     for p in points:
-        arrow.draw(p[0],p[1])
+        arrow.draw(p[0], p[1])
     arrow.draw(mx, my)
     character.clip_draw(frame * 100, 100 * action, 100, 100, cx, cy)
     update_canvas()
@@ -87,11 +89,11 @@ def update_world():
             cx = (1 - t) * sx + t * hx  # cx는 시작 x 와 끝 x 를 1-t:t 의 비율로 섞은 위치
             cy = (1 - t) * sy + t * hy
             t += 0.001
-        else:#목표위치에 도달하면
-            cx,cy=hx,hy#캐릭터 위치를 목적지 위치와 강제로 정확히 일치시킴
-            del points[0]#목표지점에 왔기 때문에,더이상 필요없는 점을 삭제
+        else:  # 목표위치에 도달하면
+            cx, cy = hx, hy  # 캐릭터 위치를 목적지 위치와 강제로 정확히 일치시킴
+            del points[0]  # 목표지점에 왔기 때문에,더이상 필요없는 점을 삭제
             set_new_target_arrow()
-    elif points:#목표지점이 없었던 상황에서, 새로운 목표지점이 생기면
+    elif points:  # 목표지점이 없었던 상황에서, 새로운 목표지점이 생기면
         set_new_target_arrow()
 
 
